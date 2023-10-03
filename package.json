@@ -1,0 +1,16 @@
+{
+  "name": "ssvep-overlay",
+  "version": "0.0.1",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "set NODE_ENV=development&&electron ."
+  },
+  "author": "caiomiglioli",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^26.2.4",
+    "electron-reloader": "^1.2.3"
+  }
+}
