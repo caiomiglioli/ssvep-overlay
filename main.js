@@ -8,15 +8,15 @@ const createWindow = require('./src/pages/index')
 const env = process.env.NODE_ENV || 'development';
   
 // If development environment
-if (env === 'development') {
-    try {
-        require('electron-reloader')(module, {
-            debug: true,
-            watchRenderer: true,
-            hardResetMethod: 'exit'
-        });
-    } catch (_) { console.log('Error'); }    
-}
+// if (env === 'development') {
+//     try {
+//         require('electron-reloader')(module, {
+//             debug: true,
+//             watchRenderer: true,
+//             hardResetMethod: 'exit'
+//         });
+//     } catch (_) { console.log('Error'); }    
+// }
 
 app.whenReady().then(() => {
   createWindow()
