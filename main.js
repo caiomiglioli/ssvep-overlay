@@ -2,7 +2,7 @@
 
 const { app, ipcMain, BrowserWindow } = require('electron');
 const { openIndex } = require('./src/pages/index')
-const { openOverlay } = require('./src/pages/overlay')
+const { openOverlay } = require('./src/main/overlay')
 
 // --------------------------------
 // LOAD INDEX PAGE
