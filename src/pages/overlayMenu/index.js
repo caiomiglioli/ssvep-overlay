@@ -3,8 +3,8 @@ const path = require('path')
 
 function openOverlayMenu() {
   const window = new BrowserWindow({
-    width: 300,
-    height: 100,
+    width: 400,
+    height: 600,
     // frame: false,
     webPreferences: {
       contextIsolation: true,

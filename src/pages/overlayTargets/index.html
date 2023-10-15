@@ -4,14 +4,42 @@
     <meta charset="UTF-8">
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'"> -->
-    <meta http-equiv="Content-Security-Policy" content="script-src 'self'">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'">
     <title>SSVEP OVERLAY</title>
     
-    <style src="./index.css"></style>
+    <!-- <style src="./index.css"></style> -->
     <script src="./renderer.js" defer></script>
+    <link rel="stylesheet" type="text/css" href="./index.css"/>
   </head>
   
   <body>
-    <h3 style="background-color: red;" id="debug">ssvep overlay 0.0.1</h3>
-    <p id='show-data'></p>
+    <div id="page">
+
+      <dialog id="target-dialog">
+        <form method="dialog" onsubmit="handleTargetDialogSubmit(event)" style="display: grid;">
+          <label for="td-posx">Pos X:</label>
+          <input type="number" name="td-posx"/>
+          
+          <label for="td-posy">Pos Y:</label>
+          <input type="number" name="td-posy"/>
+          
+          <label for="td-sizex">Size X:</label>
+          <input type="number" name="td-sizex"/>
+
+          <label for="td-sizey">Size Y:</label>
+          <input type="number" name="td-sizey"/>
+
+          <label for="td-freq">Frequência:</label>
+          <input type="number" name="td-freq"/>
+          
+          <input type="submit" value="Cancel" name="cancel"/>
+          <input type="submit" value="Submit" name="confirm"/>
+        </form>
+      </dialog>
+
+      <h3 style="background-color: red;" id="mode-text">ssvep overlay 0.0.1</h3>
+      <p id='show-data'></p>
+
+    </div>
+  </body>
 </html>

@@ -27,15 +27,23 @@ async function openOverlay(mode) {
   mainWindow.hide(); // esconder tela inicial quando overlay for aberto
 
   // ------- COMUNICATION
-  const mtt = (event, arg) => {console.log(arg), overlayWindow.webContents.send('menu-to-targets', arg)};
+  const to = (event, toggle) => { //toggle = true ou false
+    overlayWindow.setAlwaysOnTop(!toggle, "normal");
+    overlayWindow.setIgnoreMouseEvents(!toggle);
+    overlayWindow.setFocusable(toggle);
+  };
+  ipcMain.on('toggle-overlay-editmode', to);
+
+  const mtt = (event, msg) => overlayWindow.webContents.send('menu-to-targets', msg);
   ipcMain.on('menu-to-targets', mtt);
 
-  const ttm = (event, arg) => menuWindow.webContents.send('targets-to-menu', arg);
+  const ttm = (event, msg) => menuWindow.webContents.send('targets-to-menu', msg);
   ipcMain.on('targets-to-menu', ttm);  
   
   // ------- CLOSE PROCESS
   menuWindow.on('close', () => { // mostrar tela inicial quando overlay for fechado
     ipcMain.removeHandler('getTargetsFile');
+    ipcMain.removeListener('toggle-overlay-editmode', to);
     ipcMain.removeListener('menu-to-targets', mtt);
     ipcMain.removeListener('targets-to-menu', ttm);
     overlayWindow.close();
