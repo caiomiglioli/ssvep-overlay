@@ -18,10 +18,12 @@ btn_new.addEventListener('click', (event) => {
   window.ipc.send('menu-to-targets', {'cmd': 'new-target'});
 });
 
-// run.addEventListener('click', ()=>{
-//   window.ipc.send('menu-to-targets', 'mandando conteudo pro overlay');
-// });
+btn_edit.addEventListener('click', (event) => {
+  toggleEditMode(true)
+  window.ipc.send('menu-to-targets', {'cmd': 'edit-target'});
+});
 
-// run.addEventListener('click', ()=>{
-//   window.ipc.send('menu-to-targets', 'mandando conteudo pro overlay');
-// });
+btn_del.addEventListener('click', (event) => {
+  toggleEditMode(true)
+  window.ipc.send('menu-to-targets', {'cmd': 'del-target'});
+});

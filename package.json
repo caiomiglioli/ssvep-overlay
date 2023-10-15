@@ -12,5 +12,8 @@
   "devDependencies": {
     "electron": "^26.2.4",
     "electron-reloader": "^1.2.3"
+  },
+  "dependencies": {
+    "uuidv4": "^6.2.13"
   }
 }

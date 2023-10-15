@@ -18,26 +18,26 @@
       <dialog id="target-dialog">
         <form method="dialog" onsubmit="handleTargetDialogSubmit(event)" style="display: grid;">
           <label for="td-posx">Pos X:</label>
-          <input type="number" name="td-posx"/>
+          <input type="number" name="posx" step="any"/>
           
           <label for="td-posy">Pos Y:</label>
-          <input type="number" name="td-posy"/>
+          <input type="number" name="posy" step="any"/>
           
           <label for="td-sizex">Size X:</label>
-          <input type="number" name="td-sizex"/>
+          <input type="number" name="sizex"/>
 
           <label for="td-sizey">Size Y:</label>
-          <input type="number" name="td-sizey"/>
+          <input type="number" name="sizey"/>
 
           <label for="td-freq">Frequência:</label>
-          <input type="number" name="td-freq"/>
+          <input type="number" name="freq"/>
           
           <input type="submit" value="Cancel" name="cancel"/>
           <input type="submit" value="Submit" name="confirm"/>
         </form>
       </dialog>
 
-      <h3 style="background-color: red;" id="mode-text">ssvep overlay 0.0.1</h3>
+      <h5 style="background-color: red;" id="mode-text">ssvep overlay 0.0.1</h5>
       <p id='show-data'></p>
 
     </div>

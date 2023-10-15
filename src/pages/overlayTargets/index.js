@@ -8,8 +8,6 @@ function openOverlayTargets(overlayMenu) {
 
   const window = new BrowserWindow({
     parent: overlayMenu,
-    width: 800,//primaryDisplay.workArea.width,
-    height: 400,//primaryDisplay.workArea.height,
     // frame: false,
     // focusable: false,
     // transparent: true,

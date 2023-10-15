@@ -1,3 +1,8 @@
+*:not(dialog) {
+    margin: 0;
+    padding: 0;
+}
+
 #page{
     width: 100vw;
     height: 100vh;
@@ -6,3 +11,16 @@
 #target-dialog{
     background-color: aqua;
 }
+
+.target {
+    position: absolute;
+    animation-name: blink;
+    animation-iteration-count: infinite;
+    cursor: pointer;
+}
+
+@keyframes blink {
+    0% {background-color: red;}
+    100% {background-color: yellow;}
+    /* 100% {background-color: red;} */
+  }
