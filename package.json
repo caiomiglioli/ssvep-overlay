@@ -10,10 +10,12 @@
   "author": "caiomiglioli",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^26.2.4",
-    "electron-reloader": "^1.2.3"
+    "electron": "^26.2.4"
   },
   "dependencies": {
-    "uuidv4": "^6.2.13"
+    "uuid": "^9.0.1"
+  },
+  "electronmon": {
+    "patterns": ["!test/**", "!teste.json"]
   }
 }

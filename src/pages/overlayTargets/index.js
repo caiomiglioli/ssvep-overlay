@@ -12,6 +12,7 @@ function openOverlayTargets(overlayMenu) {
     // focusable: false,
     // transparent: true,
     // alwaysOnTop: true,
+    closable: false,
     webPreferences: {
       contextIsolation: true,
       nodeIntegration: true,

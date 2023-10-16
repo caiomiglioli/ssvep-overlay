@@ -1,6 +1,6 @@
 // 'use strict';
 
-const { app, ipcMain, BrowserWindow } = require('electron');
+const { app, ipcMain, dialog } = require('electron');
 const { openIndex } = require('./src/pages/index')
 const { openOverlay } = require('./src/main/overlay')
 
@@ -8,11 +8,6 @@ const { openOverlay } = require('./src/main/overlay')
 // LOAD INDEX PAGE
 app.whenReady().then(() => {
   openIndex()
-  // app.on('activate', () => {
-  //   if (BrowserWindow.getAllWindows().length === 0) {
-  //     index()
-  //   }
-  // })
 })
 
 app.on('window-all-closed', () => {
@@ -24,7 +19,5 @@ app.on('window-all-closed', () => {
 
 // --------------------------------
 // IPC MAIN
-
-ipcMain.on('openOverlay', async (event, mode) => {
-  openOverlay(mode)
-})
+ipcMain.handle('openOverlay', (event, mode) => {openOverlay(mode)})
+ipcMain.handle('showSaveDialogSync', (e, cfg) => dialog.showSaveDialogSync(cfg));
