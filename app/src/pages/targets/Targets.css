@@ -1,0 +1,13 @@
+:root {
+  background-color: transparent !important;
+}
+
+/* @keyframes blink {
+  0%, 100% { background-color: black; }
+  50% { background-color: white; }
+} */
+
+@keyframes blink {
+  0%, 50% { background-color: white; }
+  50.01%, 100% { background-color: black; }
+}
