@@ -1,0 +1,18 @@
+{
+  "name": "LSL Module",
+  "description": "Recebe dados via LSL e publica via ZeroMQ.",
+  "fields": [
+    {
+      "name": "stream_name",
+      "type": "string",
+      "label": "Nome da Stream",
+      "default": "EEG"
+    },
+    {
+      "name": "publish_interval",
+      "type": "number",
+      "label": "Intervalo de Publicação (s)",
+      "default": 5
+    }
+  ]
+}

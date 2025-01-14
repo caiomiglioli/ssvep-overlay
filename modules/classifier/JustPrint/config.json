@@ -1,0 +1,12 @@
+{
+  "name": "Simple FFT Module",
+  "description": "Recebe dados capturados e aplica FFT.",
+  "fields": [
+    {
+      "name": "stream_name",
+      "type": "string",
+      "label": "Nome da Stream",
+      "default": "EEG"
+    }
+  ]
+}
