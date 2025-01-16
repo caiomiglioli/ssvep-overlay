@@ -71,6 +71,6 @@ def start_module(params):
     stream_name = params.get("stream_name", "obci_eeg1")
     publish_interval = params.get("publish_interval", 1)
 
-    module = LSLModule(stream_name, publish_interval)
+    module = LSLModule(stream_name, float(publish_interval))
     module.run()
 #end start module

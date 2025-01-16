@@ -2,9 +2,8 @@ const { ipcMain, BrowserWindow, screen, Tray, Menu, dialog } = require("electron
 const { writeFileSync } = require("fs");
 const path = require("path");
 const url = require("url");
-const { spawn } = require("child_process");
-const { Worker } = require("worker_threads");
 const { getModules } = require("./modules");
+const { stopModules, startModules } = require("../../background/modules");
 
 /*
   Se colocar como alwaysontop e focusable no browserwindow, buga a tela
@@ -14,10 +13,11 @@ const { getModules } = require("./modules");
   e ao clicar no tray, irá iniciar o modo execução, onde é alwaysontop e não é focusable
 */
 
-let captureModule = null;
-let treatmentModule = null;
-let classifierModule = null;
-let pipelineWorker = null;
+// Inicializa o estado global de configuração dos módulos
+global.targetsConfig = {
+  targets: {},
+  modules: {},
+};
 
 function createWindow() {
   const window = new BrowserWindow({
@@ -82,92 +82,21 @@ function setEditmode(window, active) {
   window.setAlwaysOnTop(!active, "normal");
   window.webContents.send("targets:editmode", active);
 
+  const onError = (error, moduleName = null) => {
+    window.setFocusable(true);
+    window.setIgnoreMouseEvents(false);
+    window.setAlwaysOnTop(false, "normal");
+    window.webContents.send("targets:editmode", true);
+    window.webContents.send("targets:error", error.message);
+    stopModules();
+    console.log({ type: "Erro no Pipeline", module: moduleName, msg: error.message, error: error });
+  };
+
   try {
-    if (active) {
-      // Excluir módulos
-      if (captureModule) {
-        console.log("Encerrando captura para modo de edição...");
-        captureModule.kill("SIGTERM");
-        captureModule = null;
-      }
-
-      if (treatmentModule) {
-        console.log("Encerrando tratamento para modo de edição...");
-        treatmentModule.kill("SIGTERM");
-        treatmentModule = null;
-      }
-
-      if (classifierModule) {
-        console.log("Encerrando classificação para modo de edição...");
-        classifierModule.kill("SIGTERM");
-        classifierModule = null;
-      }
-
-      // Pausar o pipeline
-      if (pipelineWorker) {
-        pipelineWorker.postMessage({ action: "stop" });
-        pipelineWorker.once("message", (message) => {
-          if (message.status === "stopped") {
-            pipelineWorker.terminate().then(() => (pipelineWorker = null));
-            console.log("Finalização do Worker concluída.");
-            console.log("Pipeline pausado.");
-          }
-        });
-      }
-    } else {
-      // Iniciar módulos
-      if (!captureModule) {
-        captureModule = spawn(
-          "python",
-          [
-            "-u",
-            "modules/main.py",
-            "listener",
-            "OpenBCI_LSL",
-            JSON.stringify({ stream_name: "obci_eeg1", publish_interval: 5 }),
-          ],
-          { stdio: ["pipe", "pipe", "pipe"] }
-        );
-
-        // por algum motivo se não deixar isso aqui on, trava
-        captureModule.stdout.on("data", (data) => {
-          console.log(`captureModule: ${data.toString()}`);
-        });
-      }
-
-      if (!treatmentModule) {
-        treatmentModule = spawn("python", ["-u", "modules/main.py", "treatment", "SimpleFFT"], {
-          stdio: ["pipe", "pipe", "pipe"],
-        });
-
-        // por algum motivo se não deixar isso aqui on, trava
-        treatmentModule.stdout.on("data", (data) => {
-          console.log(`treatmentModule: ${data.toString()}`);
-        });
-      }
-
-      if (!classifierModule) {
-        classifierModule = spawn("python", ["-u", "modules/main.py", "classifier", "JustPrint"], {
-          stdio: ["pipe", "pipe", "pipe"],
-        });
-
-        // por algum motivo se não deixar isso aqui on, trava
-        classifierModule.stdout.on("data", (data) => {
-          console.log(`classifierModule: ${data.toString()}`);
-        });
-      }
-
-      // Iniciar o pipeline
-      if (!pipelineWorker) {
-        pipelineWorker = new Worker("./background/pipeline.js");
-        pipelineWorker.on("error", (err) => setEditmode(window, true));
-        pipelineWorker.postMessage({ action: "start", config: {} });
-        console.log("Pipeline iniciado.");
-      }
-    }
+    if (active) stopModules();
+    else startModules(onError, global.targetsConfig);
   } catch (e) {
-    console.log({ type: "Erro no Pipeline", msg: e.message, error: e });
-    setEditmode(window, true);
+    onError(e, "setEditmode");
   }
 }
 
@@ -210,14 +139,17 @@ function createTargetsWindow(config, path = null) {
   // ---------------- ipc on
   ipcMain.handle("overlay:exit", () => window.close());
   ipcMain.handle("config:save", (_, targets, modules) => saveConfig(targets, modules, path));
+  ipcMain.handle("config:update", (_, targets, modules) => (global.targetsConfig = { targets, modules }));
   ipcMain.handle("targets:get", () => config.targets);
   ipcMain.handle("modules:get", () => config.modules);
   ipcMain.handle("modules:getAvailable", () => getModules());
 
   // ---------------- ipc off
   window.on("close", () => {
+    stopModules();
     ipcMain.removeHandler("overlay:exit");
     ipcMain.removeHandler("config:save");
+    ipcMain.removeHandler("config:update");
     ipcMain.removeHandler("targets:get");
     ipcMain.removeHandler("modules:get");
     ipcMain.removeHandler("modules:getAvailable");

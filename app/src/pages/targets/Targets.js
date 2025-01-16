@@ -48,6 +48,52 @@ export default function Targets() {
     setTimeout(() => setToast(null), 2000);
   };
 
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ on page start
+
+  const onErrorCallback = (_, message) => {
+    setToast(
+      <div className="alert alert-error">
+        <span>
+          Falha ao iniciar o sistema. Verifique o fluxo de sinal.
+          <br />
+          <span className="text-xs">{message}</span>
+        </span>
+      </div>
+    );
+    setTimeout(() => setToast(null), 2000);
+  };
+
+  const toggleEditModeCallback = (_, enabled) => setInEditmode(enabled);
+
+  useEffect(() => {
+    // fetch targets
+    (async () => {
+      const [presetTargets, presetModules, availableModules] = await Promise.all([
+        window.targetsPage.getTargets(),
+        window.targetsPage.getModules(),
+        window.targetsPage.getAvailableModules(),
+      ]);
+      setTargets(presetTargets);
+      setModules(presetModules);
+      setAvModules(availableModules);
+    })();
+
+    // toggle edit mode
+    window.targetsPage.onEditmode(toggleEditModeCallback);
+    window.targetsPage.onError(onErrorCallback);
+    return () => {
+      window.targetsPage.offEditmode(toggleEditModeCallback);
+      window.targetsPage.offError(onErrorCallback);
+    };
+  }, []);
+
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ keep electron updated
+  useEffect(() => {
+    (async () => {
+      await window.targetsPage.updateConfig(targets, modules);
+    })();
+  }, [targets, modules]);
+
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ context menu functions
   const openModulesModal = () => {
     setMmParams({
@@ -88,7 +134,7 @@ export default function Targets() {
   };
 
   const saveTargets = async () => {
-    const result = await window.targets.save(targets, modules);
+    const result = await window.targetsPage.saveConfig(targets, modules);
     if (result === "success") {
       setToast(
         <div className="alert alert-success">
@@ -110,28 +156,6 @@ export default function Targets() {
     }
     setTimeout(() => setToast(null), 2000);
   };
-
-  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ on page start
-  useEffect(() => {
-    // fetch targets
-    (async () => {
-      const [presetTargets, presetModules, availableModules] = await Promise.all([
-        window.targets.get(),
-        window.targets.getModules(),
-        window.targets.getAvailableModules(),
-      ]);
-      setTargets(presetTargets);
-      setModules(presetModules);
-      setAvModules(availableModules);
-    })();
-
-    // toggle edit mode
-    const toggleEditModeCallback = (event, enabled) => setInEditmode(enabled);
-    window.targets.onEditmode(toggleEditModeCallback);
-    return () => {
-      window.targets.offEditmode(toggleEditModeCallback);
-    };
-  }, []);
 
   return (
     <div className="w-screen h-screen overflow-hidden">

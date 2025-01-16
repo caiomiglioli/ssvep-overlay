@@ -1,7 +1,6 @@
 const { parentPort } = require("worker_threads");
 const zmq = require("zeromq");
 
-let pipelineInterval = null;
 let sockets = {};
 
 async function startPipeline(config) {
