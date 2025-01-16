@@ -4,6 +4,7 @@ const path = require("path");
 const url = require("url");
 const { spawn } = require("child_process");
 const { Worker } = require("worker_threads");
+const { getModules } = require("./modules");
 
 /*
   Se colocar como alwaysontop e focusable no browserwindow, buga a tela
@@ -81,8 +82,6 @@ function setEditmode(window, active) {
   window.setAlwaysOnTop(!active, "normal");
   window.webContents.send("targets:editmode", active);
 
-  // Modo de edição desativado: inicia o processo Python
-  // captureModule = spawn("python", ["-u", "modules/listener/main.py"], { stdio: ["pipe", "pipe", "pipe"] });
   try {
     if (active) {
       // Excluir módulos
@@ -168,10 +167,11 @@ function setEditmode(window, active) {
     }
   } catch (e) {
     console.log({ type: "Erro no Pipeline", msg: e.message, error: e });
+    setEditmode(window, true);
   }
 }
 
-function saveConfig(targets, filepath) {
+function saveConfig(targets, modules, filepath) {
   try {
     const path = dialog.showSaveDialogSync({
       title: "SSVEP-Overlay: Guardar configurações",
@@ -186,6 +186,7 @@ function saveConfig(targets, filepath) {
         JSON.stringify({
           overlay: "0.0.1",
           targets: targets,
+          modules: modules,
         })
       );
       return "success";
@@ -196,7 +197,7 @@ function saveConfig(targets, filepath) {
   }
 }
 
-function createTargetsWindow(targets, path = null) {
+function createTargetsWindow(config, path = null) {
   // ---------------- HIDE MAIN WINDOW
   const mainWindow = BrowserWindow.getAllWindows().find((win) => win.name === "main");
   mainWindow.hide();
@@ -208,15 +209,18 @@ function createTargetsWindow(targets, path = null) {
 
   // ---------------- ipc on
   ipcMain.handle("overlay:exit", () => window.close());
-  ipcMain.handle("targets:get", () => targets);
-  ipcMain.handle("targets:save", (_, targets) => saveConfig(targets, path));
+  ipcMain.handle("config:save", (_, targets, modules) => saveConfig(targets, modules, path));
+  ipcMain.handle("targets:get", () => config.targets);
+  ipcMain.handle("modules:get", () => config.modules);
+  ipcMain.handle("modules:getAvailable", () => getModules());
 
   // ---------------- ipc off
   window.on("close", () => {
     ipcMain.removeHandler("overlay:exit");
+    ipcMain.removeHandler("config:save");
     ipcMain.removeHandler("targets:get");
-    ipcMain.removeHandler("targets:save");
-    // ipcMain.removeListener('menu-to-targets', mtt);
+    ipcMain.removeHandler("modules:get");
+    ipcMain.removeHandler("modules:getAvailable");
     // ipcMain.removeListener('targets-to-menu', ttm);
     if (tray) tray.destroy();
     if (mainWindow) mainWindow.show();

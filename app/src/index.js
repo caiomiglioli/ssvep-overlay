@@ -1,33 +1,31 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { BrowserRouter, HashRouter, Routes, Route, useLocation } from 'react-router-dom';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { BrowserRouter, HashRouter, Routes, Route, useLocation } from "react-router-dom";
+import reportWebVitals from "./reportWebVitals";
 
-import Main from './pages/main/Main';
-import Targets from './pages/targets/Targets';
-import './index.css';
-
+import Main from "./pages/main/Main";
+import Targets from "./pages/targets/Targets";
+import "./index.css";
 
 const Location = () => {
   const location = useLocation();
   console.log(location.pathname); // Isso vai logar a rota atual
 
-  return <p>{location.pathname}</p>
-}
+  return <p>{location.pathname}</p>;
+};
 
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   // <React.StrictMode>
   <BrowserRouter>
-  {/* <HashRouter> */}
+    {/* <HashRouter> */}
     <Routes>
       <Route path="/" element={<Main />} />
-      <Route path="/targets" element={<Targets />}/>
+      <Route path="/targets" element={<Targets />} />
     </Routes>
     {/* <Location/> */}
-  {/* </HashRouter> */}
-  </BrowserRouter> 
+    {/* </HashRouter> */}
+  </BrowserRouter>
   // </React.StrictMode>
 );
 
