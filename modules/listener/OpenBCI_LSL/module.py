@@ -1,9 +1,8 @@
 from modules.listener.base_module import BaseListenerModule
 from pylsl import StreamInlet, resolve_streams
 import time
-
 class LSLModule(BaseListenerModule):
-    def __init__(self, stream_name=None, publish_interval=5):
+    def __init__(self, stream_name=None, electrodes=1, freq=256, overlap=50, publish_interval=2):
         """
         Módulo LSL.
         Args:
@@ -12,9 +11,14 @@ class LSLModule(BaseListenerModule):
         """
         super().__init__()
         self.stream_name = stream_name
+        self.electrodes = electrodes
+        self.freq = freq
+        self.overlap = overlap
         self.publish_interval = publish_interval
+        print({ stream_name: self.stream_name, electrodes: self.electrodes, freq: self.freq, overlap: self.overlap, publish_interval: self.publish_interval})
+
         self.inlet = None
-        self.buffer = [[] for _ in range(4)]
+        self.buffer = [[] for _ in range(electrodes)]
 
         # Resolve a stream LSL
         streams = resolve_streams()
@@ -33,21 +37,25 @@ class LSLModule(BaseListenerModule):
         Loop principal do módulo.
         Recebe dados via LSL e acumula no buffer, publicando periodicamente.
         """
-        last_publish_time = time.time()
+        n_samples = 0
+        max_samples = self.freq * self.publish_interval
+        overlap_samples = int(max_samples * (self.overlap / 100))
+
         try:
             while True:
-              # Recebe dados da stream LSL
-              sample, timestamp = self.inlet.pull_sample(timeout=1.0)
-              if sample:
-                #   print(f"Amostra recebida: {sample} (Buffer: {len(self.buffer)})")
-                for i, value in enumerate(sample):
-                    self.buffer[i].append(value)
+                # Recebe dados da stream LSL
+                sample, timestamp = self.inlet.pull_sample(timeout=1.0)
+                if sample:
+                    for i, value in enumerate(sample):
+                        self.buffer[i].append(value)
+                    n_samples += 1
 
-              # Publica os dados se o intervalo foi atingido
-              if time.time() - last_publish_time >= self.publish_interval:
-                  self.publish_data({"timestamp": timestamp, "data": self.buffer})
-                  self.buffer = [[] for _ in range(4)]  # Limpa o buffer
-                  last_publish_time = time.time()
+                # Publica os dados se o intervalo foi atingido
+                if n_samples >= max_samples:
+                    # print({"type": "listener", "n_samples": n_samples, "max_samples":max_samples, "overlap_samples":overlap_samples,"timestamp": timestamp, "data": self.buffer[0]})
+                    self.publish_data({"timestamp": timestamp, "data": self.buffer})
+                    self.buffer = [channel[-(overlap_samples + 1):] for channel in self.buffer] # Mantém apenas os últimos overlap_samples do buffer             
+                    n_samples = overlap_samples # Reinicia a contagem
 
         except Exception as e:
             print(f"Erro no LSLModule: {e}")
@@ -69,8 +77,11 @@ def start_module(params):
         params (dict): Parâmetros do módulo.
     """
     stream_name = params.get("stream_name", "obci_eeg1")
-    publish_interval = params.get("publish_interval", 1)
+    electrodes = params.get("electrodes", 1)
+    freq = params.get("freq", 256)
+    overlap = params.get("overlap", 50)
+    publish_interval = params.get("publish_interval", 2)
 
-    module = LSLModule(stream_name, float(publish_interval))
+    module = LSLModule(stream_name, int(electrodes), int(freq), int(overlap), int(publish_interval))
     module.run()
 #end start module

@@ -6,13 +6,34 @@
       "name": "stream_name",
       "type": "text",
       "label": "Nome da Stream",
-      "default": "EEG"
+      "default": "obci_eeg1"
+    },
+    {
+      "name": "electrodes",
+      "type": "text",
+      "label": "Nº de Eletrodos",
+      "default": 4
+    },
+    {
+      "name": "freq",
+      "type": "number",
+      "label": "Taxa de Atualização",
+      "default": 256,
+      "unit": "Hz"
+    },
+    {
+      "name": "overlap",
+      "type": "number",
+      "label": "Sobreposição",
+      "default": 50,
+      "unit": "%"
     },
     {
       "name": "publish_interval",
       "type": "number",
-      "label": "Intervalo de Publicação (s)",
-      "default": 5
+      "label": "Intervalo de Publicação",
+      "default": 2,
+      "unit": "s"
     }
   ]
 }

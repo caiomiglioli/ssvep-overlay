@@ -17,13 +17,15 @@ function createWindow() {
   window.setMenu(null);
   window.name = "main";
 
-  // window.loadURL(url.format({
-  //   pathname: path.join(process.cwd(), './app/build/index.html'),
-  //   protocol: 'file',
-  // }));
+  window.loadURL(
+    url.format({
+      pathname: path.join(process.cwd(), "./app/build/index.html"),
+      protocol: "file:",
+    })
+  );
 
-  window.webContents.openDevTools();
-  window.loadURL("http://localhost:3000");
+  // window.webContents.openDevTools();
+  // window.loadURL("http://localhost:3000");
 
   return window;
 }

@@ -10,6 +10,10 @@
   "license": "ISC",
   "dependencies": {
     "electron": "^29.1.4",
+    "robotjs": "^0.6.0",
     "zeromq": "^6.3.0"
+  },
+  "devDependencies": {
+    "electron-rebuild": "^3.2.9"
   }
 }

@@ -34,15 +34,17 @@ function createWindow() {
   window.setBounds(screen.getPrimaryDisplay().workArea);
   window.name = "targets";
 
-  // window.loadURL(url.format({
-  //   pathname: path.join(process.cwd(), './app/build/index.html'),
-  //   protocol: 'file:',
-  //   slashes: true,
-  //   hash: '/targets',
-  // }));
+  window.loadURL(
+    url.format({
+      pathname: path.join(process.cwd(), "./app/build/index.html"),
+      protocol: "file:",
+      slashes: true,
+      hash: "/targets",
+    })
+  );
 
-  window.webContents.openDevTools();
-  window.loadURL("http://localhost:3000/targets/");
+  // window.webContents.openDevTools();
+  // window.loadURL("http://localhost:3000/targets/");
 
   return window;
 }

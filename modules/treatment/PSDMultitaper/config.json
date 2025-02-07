@@ -1,0 +1,27 @@
+{
+  "name": "Simple PSD Multitaper Module",
+  "description": "Recebe dados capturados e aplica PSD.",
+  "fields": [
+    {
+      "name": "freq",
+      "type": "number",
+      "label": "Taxa de Atualização",
+      "default": 256,
+      "unit": "Hz"
+    },
+    {
+      "name": "lowcut",
+      "type": "number",
+      "label": "Filtro Lowcut",
+      "default": 5,
+      "unit": "Hz"
+    },
+    {
+      "name": "highcut",
+      "type": "number",
+      "label": "Filtro Highcut",
+      "default": 12,
+      "unit": "Hz"
+    }
+  ]
+}
