@@ -32,6 +32,7 @@ export default function Targets() {
 
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Targets specific
   const [targets, setTargets] = useState({});
+  const [activeTarget, setActiveTarget] = useState(null);
   const [tmParams, setTmParams] = useState({ open: false });
 
   const updateTargets = (id, target) => {
@@ -63,6 +64,11 @@ export default function Targets() {
     setTimeout(() => setToast(null), 2000);
   };
 
+  const onKeytapCallback = (_, targetId) => {
+    setActiveTarget(targetId);
+    setTimeout(() => setActiveTarget(null), 500);
+  };
+
   const toggleEditModeCallback = (_, enabled) => setInEditmode(enabled);
 
   useEffect(() => {
@@ -81,9 +87,11 @@ export default function Targets() {
     // toggle edit mode
     window.targetsPage.onEditmode(toggleEditModeCallback);
     window.targetsPage.onError(onErrorCallback);
+    window.targetsPage.onKeytap(onKeytapCallback);
     return () => {
       window.targetsPage.offEditmode(toggleEditModeCallback);
       window.targetsPage.offError(onErrorCallback);
+      window.targetsPage.offKeytap(onKeytapCallback);
     };
   }, []);
 
@@ -165,6 +173,9 @@ export default function Targets() {
           [ ! ] MODO EDIÇÃO ATIVADO: VOCÊ PODE DESATIVÁ-LO ATRAVÉS DO ÍCONE DE BANDEJA
         </p>
       )}
+      {(!modules.listener || !modules.treatment || !modules.classifier) && (
+        <p className="bg-primary text-secondary-content text-xs P-1">[ ! ] MÓDULOS NÃO INSTANCIADOS</p>
+      )}
 
       {/* modals */}
       {mmParams.open && <ModulesModal params={mmParams} />}
@@ -176,7 +187,14 @@ export default function Targets() {
         <ContextMenu.Trigger asChild>
           <div className="w-full h-full">
             {Object.entries(targets).map(([key, value]) => (
-              <Target key={key} id={key} params={value} editTarget={editTarget} removeTarget={removeTarget} />
+              <Target
+                key={key}
+                id={key}
+                active={activeTarget === key}
+                params={value}
+                editTarget={editTarget}
+                removeTarget={removeTarget}
+              />
             ))}
           </div>
         </ContextMenu.Trigger>

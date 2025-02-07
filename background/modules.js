@@ -17,7 +17,7 @@ let treatmentModule = null;
 let classifierModule = null;
 let pipelineWorker = null;
 
-function startModules(onError, config) {
+function startModules(onError, onKeytap, config) {
   console.log({ startModulesConfig: JSON.stringify(config) });
 
   if (!config.modules.listener || !config.modules.treatment || !config.modules.classifier) {
@@ -107,7 +107,10 @@ function startModules(onError, config) {
         "modules/main.py",
         "classifier",
         config.modules.classifier.name,
-        JSON.stringify(config.modules.classifier.params),
+        JSON.stringify({
+          ...config.modules.classifier.params,
+          targets: config.targets,
+        }),
       ],
       {
         stdio: ["pipe", "pipe", "pipe"],
@@ -143,7 +146,13 @@ function startModules(onError, config) {
     pipelineWorker.on("error", (err) => {
       onError(err, "Pipeline de Comando");
     });
-    pipelineWorker.postMessage({ action: "start", config: {} });
+    pipelineWorker.on("message", (message) => {
+      if (message.type === "keytap") {
+        onKeytap(message.target);
+      }
+      console.log("Electron pipelineWorker on message ->", message);
+    });
+    pipelineWorker.postMessage({ action: "start", config: config.targets });
     console.log("Pipeline iniciado.");
   }
 }

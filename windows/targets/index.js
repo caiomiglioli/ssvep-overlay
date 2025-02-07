@@ -94,9 +94,13 @@ function setEditmode(window, active) {
     console.log({ type: "Erro no Pipeline", module: moduleName, msg: error.message, error: error });
   };
 
+  const onKeytap = (targetId) => {
+    window.webContents.send("targets:keytap", targetId);
+  };
+
   try {
     if (active) stopModules();
-    else startModules(onError, global.targetsConfig);
+    else startModules(onError, onKeytap, global.targetsConfig);
   } catch (e) {
     onError(e, "setEditmode");
   }

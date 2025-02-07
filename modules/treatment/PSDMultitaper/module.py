@@ -15,18 +15,18 @@ class PSDProcessorModule(BaseTreatmentModule):
         try:
             signal = data["data"]
             processed = []
-            freqs = []
+            frequencies = []
             
             for channel in signal:
                 x_np = np.array(channel)
                 psd, freqs = mne.time_frequency.psd_array_multitaper(x_np, sfreq=self.freq, fmin=self.lowcut, fmax=self.highcut, verbose=False)
-                processed.append(freqs.tolist())
-                freqs = psd.tolist()
+                processed.append(psd.tolist())
+                frequencies = freqs.tolist()
             
             if self.verbose:
-                print({"type": "treatment", "timestamp": data["timestamp"], "sfreq": self.freq, "fmin": self.lowcut, "fmax": self.highcut, "freqds": freqs, "data": processed})
+                print({"type": "treatment", "timestamp": data["timestamp"], "sfreq": self.freq, "fmin": self.lowcut, "fmax": self.highcut, "freqs": frequencies, "data": processed})
             
-            return {"timestamp": data["timestamp"], "freqs": freqs, "data": processed}
+            return {"timestamp": data["timestamp"], "freqs": frequencies, "data": processed}
         except Exception as e:
             print(f"Erro no módulo de FFTProcessorModule: {e}")
     

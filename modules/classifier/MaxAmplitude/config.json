@@ -1,0 +1,13 @@
+{
+  "name": "Max Amplitude",
+  "description": "Recebe dados processados e identifica a maior amplitude.",
+  "fields": [
+    {
+      "name": "freq_threshold",
+      "type": "number",
+      "label": "Limiar de Aproximação",
+      "default": 0.5,
+      "unit": "Hz"
+    }
+  ]
+}

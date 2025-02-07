@@ -12,4 +12,7 @@ contextBridge.exposeInMainWorld("targetsPage", {
   //
   onError: (callback) => ipcRenderer.on("targets:error", callback),
   offError: (callback) => ipcRenderer.removeListener("targets:error", callback),
+  //
+  onKeytap: (callback) => ipcRenderer.on("targets:keytap", callback),
+  offKeytap: (callback) => ipcRenderer.removeListener("targets:keytap", callback),
 });

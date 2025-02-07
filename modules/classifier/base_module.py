@@ -45,7 +45,8 @@ class BaseClassifierModule(ABC):
                 message = self.subscriber.recv_json()
                 # print(f"Dados recebidos para classificação: {message}")
                 classification = self.classify_data(message)
-                self.publisher.send_json(classification)
+                if classification is not None:
+                    self.publisher.send_json(classification)
                 # print(f"Resultado da classificação enviado: {classification}")
         except Exception as e:
             print(f"Erro no módulo de classificação: {e}")

@@ -26,6 +26,7 @@ export default function TargetModal({ params }) {
       sizeY: params.mode === "new" ? 5 : params.target.sizeY,
       freq: params.mode === "new" ? 10 : params.target.freq,
       cmd: params.mode === "new" ? "" : params.target.cmd,
+      isActive: params.isActive ?? false,
     });
   }, [params]);
 
