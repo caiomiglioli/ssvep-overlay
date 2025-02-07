@@ -2,18 +2,34 @@
   "name": "ssvep-overlay",
   "version": "0.0.1",
   "description": "",
-  "main": "main.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "author": "Caio Miglioli",
   "license": "ISC",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dist": "electron-builder"
+  },
+  "build": {
+    "appId": "com.caiomiglioli.ssvepoverlay",
+    "productName": "SSVEP Overlay",
+    "files": [
+      "dist/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "linux": {
+      "target": "AppImage",
+      "category": "Utility",
+      "icon": "logo.png"
+    }
+  },
   "dependencies": {
     "electron": "^29.1.4",
     "robotjs": "^0.6.0",
     "zeromq": "^6.3.0"
   },
   "devDependencies": {
+    "electron-builder": "^25.1.8",
     "electron-rebuild": "^3.2.9"
   }
 }
