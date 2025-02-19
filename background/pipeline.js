@@ -31,7 +31,7 @@ async function startPipeline(targets) {
 function stopPipeline() {
   Object.values(sockets).forEach((socket) => socket.close());
   sockets = {};
-  parentPort.postMessage({ type: "stop" });
+  parentPort.postMessage({ status: "stop" });
 }
 
 // Escuta mensagens do processo principal

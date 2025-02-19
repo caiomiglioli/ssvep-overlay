@@ -143,17 +143,19 @@ function startModules(onError, onKeytap, config) {
   // Iniciar o pipeline
   if (!pipelineWorker) {
     pipelineWorker = new Worker("./background/pipeline.js");
-    pipelineWorker.on("error", (err) => {
-      onError(err, "Pipeline de Comando");
-    });
+    pipelineWorker.postMessage({ action: "start", config: config.targets });
     pipelineWorker.on("message", (message) => {
       if (message.type === "keytap") {
         onKeytap(message.target);
       }
       console.log("Electron pipelineWorker on message ->", message);
     });
-    pipelineWorker.postMessage({ action: "start", config: config.targets });
+    pipelineWorker.on("error", (err) => {
+      onError(err, "Pipeline de Comando");
+    });
     console.log("Pipeline iniciado.");
+  } else {
+    pipelineWorker.postMessage({ action: "start", config: config.targets });
   }
 }
 
@@ -180,8 +182,8 @@ function stopModules() {
   // Pausar o pipeline
   if (pipelineWorker) {
     pipelineWorker.postMessage({ action: "stop" });
-    pipelineWorker.once("message", (message) => {
-      if (message.status === "stopped") {
+    pipelineWorker.on("message", (message) => {
+      if (message.status === "stop") {
         pipelineWorker.terminate().then(() => (pipelineWorker = null));
         console.log("Finalização do Worker concluída.");
         console.log("Pipeline pausado.");

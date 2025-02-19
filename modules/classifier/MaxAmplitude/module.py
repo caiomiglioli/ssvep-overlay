@@ -33,8 +33,8 @@ class MaxAmplitudeClassifierModule(BaseClassifierModule):
                 closest_target_uuid = uuid
                 min_freq = target['freq']
 
-        if self.verbose:
-            print({"type": "classifier", "timestamp": data["timestamp"], "prediction": closest_target_uuid, "prediction_freq": min_freq, "freq_threshold": self.freq_threshold, "max_frequency": max_frequency, "max_amplitude": max_amplitude})
+        # if self.verbose:
+        print({"type": "classifier", "timestamp": data["timestamp"], "prediction": closest_target_uuid, "prediction_freq": min_freq, "freq_threshold": self.freq_threshold, "max_frequency": max_frequency, "max_amplitude": max_amplitude})
         
         # Deve ser retornato "prediction" contendo o ID do target predito
         if closest_target_uuid is not None:
